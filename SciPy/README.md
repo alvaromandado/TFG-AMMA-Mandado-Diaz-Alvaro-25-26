@@ -4,17 +4,18 @@ Este directorio contiene la implementación manual del algoritmo GRAPE (L-BFGS-B
 $$H=J(\sigma_z\otimes\sigma_z)+(u_1(t)\sigma_x+u_2(t)\sigma_y)\otimes 1+1\otimes(u_3(t)\sigma_x+u_4(t)\sigma_y)$$
 
 ## Descripción
-El archivo `GRAPE_SciPy.py` describe el hamiltoniano y los parámetros del problema para luego optimizar los controles a través de *scipy.optimize.minimize*.
+El archivo `GRAPE_SciPy.py` describe el hamiltoniano modificado y los parámetros del problema para luego optimizar los controles a través de *scipy.optimize.minimize*.
 Se optimiza corriendo el algoritmo con controles iniciales aleatorios, se calculan los valores de la función a optimizar y se muestran los controles que más mejoran la función.
 
-El archivo `CRAB_SciPy.py` describe el hamiltoniano y los parámetros del problema para luego optimizar los controles a través de *scipy.optimize.minimize*.
-Se optimiza corriendo el algoritmo con frecuencias aleatorias, se calculan los valores de los parámetros a optimizar y se muestran los controles que más mejoran la función.
+El archivo `CRAB_SciPy.py` describe el hamiltoniano original y modificado y los parámetros del problema para luego optimizar los controles a través de *scipy.optimize.minimize*.
+Se optimiza corriendo el algoritmo para ambos hamiltonianos con frecuencias aleatorias, se calculan los valores de los parámetros a optimizar y se muestran los controles que más mejoran la función.
 
 ## Contenido
 * **`GRAPE_SciPy.py`**: Implementación de GRAPE utilizando SciPy. El código corre el algoritmo varias veces y elige el mejor resultado.
 * **`grape_scipy.png`**: Representación gráfica de los mejores controles encontrados por el código para GRAPE.
 * **`CRAB_SciPy.py`**: Implementación de CRAB utilizando SciPy. El código corre el algoritmo varias veces y elige el mejor resultado.
-* **`crab_scipy.png`**: Representación gráfica de los mejores controles encontrados por el código para CRAB.
+* **`crab_scipy_original.png`**: Representación gráfica de los mejores controles encontrados por el código para CRAB para el hamiltoniano original.
+* **`crab_scipy_modificado.png`**: Representación gráfica de los mejores controles encontrados por el código para CRAB para el hamiltoniano modificado.
 
 ## Ejecución
 ```bash

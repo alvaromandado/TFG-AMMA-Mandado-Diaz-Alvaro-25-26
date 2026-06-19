@@ -96,6 +96,8 @@ def optimizar_crab(H_drift, titulo_grafica):
     mejor_nombre_global = None
 
     # Hacemos 5 intentos con distintas semillas de amplitudes
+    # Este proceso podría realizarse en paralelo en varios hilos mediante la librería joblib
+    
     intentos = 5
     dimension_c = 4 * N_c * 2
 

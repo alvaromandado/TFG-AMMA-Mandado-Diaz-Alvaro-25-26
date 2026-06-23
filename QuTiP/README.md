@@ -9,7 +9,7 @@ Se optimiza mediante distintos generadores de pulsos iniciales, se calculan los 
 
 ## Contenido
 * **`GRAPE_QuTiP.py`**: Implementación utilizando QuTiP. El código corre el algoritmo varias veces y elige el mejor resultado.
-* **`qutip.png`**: Representación gráfica de los mejores controles encontrados por el código.
+* **`grape_qutip.png`**: Representación gráfica de los mejores controles encontrados por el código.
 
 ## Ejecución
 ```bash

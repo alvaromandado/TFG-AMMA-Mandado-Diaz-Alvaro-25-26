@@ -1,7 +1,7 @@
 # CÓDIGO PARA EL CÁLCULO NUMÉRICO CON GRAPE Y EL PAQUETE QUTIP
 # Este código forma parte de un anexo adicional del Trabajo de Fin de Grado para la obtención del Doble Grado en Física y Matemáticas de nombre
 # "Introducción a la teoría de control óptimo en la dinámica de sistemas cuánticos", del curso 2026. Los tutores son Mihaela Negreanu Pruna y Federico Herrero Hervás.
-# El autor de este código, así como del Trabajo de Fin de Grado al que pertence, es Álvaro Mandado Díaz.
+# El autor de este código, así como del Trabajo de Fin de Grado al que pertenece, es Álvaro Mandado Díaz.
 
 # Este código incluye la implementación del algoritmo GRAPE con QuTiP para resolver el problema de la puerta CNOT. Se irá comentando qué hace cada parte del mismo.
 
@@ -21,7 +21,7 @@ J_const = 1.0       # Constante de acoplamiento ZZ
 alpha = 0.05        # Penalización del uso de controles para el funcional J
 t_f = 5.0           # Tiempo final
 N = 1000            # Número de intervalos de la discretización
-dt = t_f / N
+dt = t_f / N        # Paso temporal de la discretización
 amp_limite = 5.0    # Límite de amplitud de los controles (para el algoritmo L-BFGS-B)
 
 # Tolerancias y límites de la optimización
@@ -35,22 +35,23 @@ I, sx, sy, sz = qt.qeye(2), qt.sigmax(), qt.sigmay(), qt.sigmaz()    # Puertas d
 
 H_d = J_const * qt.tensor(sz, sz)   # Hamiltoniano de deriva, como operador producto de dos qubits
 
+# Añadimos los términos de control
 H_c = [
-    qt.tensor(sx, I), qt.tensor(sy, I),
-    qt.tensor(I, sx), qt.tensor(I, sy)
-]   # Hamiltonianos de control, como operadores producto de dos qubits
+    qt.tensor(I, I),    # Hamiltoniano de control para u0 (Término de identidad global)
+    qt.tensor(sx, I), qt.tensor(sy, I),  # Hamiltonianos para u1 y u2
+    qt.tensor(I, sx), qt.tensor(I, sy)   # Hamiltonianos para u3 y u4
+]
 
 # Definimos los operadores evolución inicial y objetivo
 
 U_0 = qt.tensor(I, I)
 U_target = cnot()
 
-# Puesto que L-BFGS-B maximiza el rendimiento pero no minimiza J, calculamos J explícitamente
+# Puesto que L-BFGS-B maximiza la fidelidad pero no minimiza J, calculamos J explícitamente
 # 'resultado' mide el final de la simulación en su conjunto
 
 def funcional_J(resultado, alpha_val, dt_val, target):
     U_final = resultado.evo_full_final   # Obtenemos el operador evolución obtenido
-    # g = -Re[tr(U_target^\dagger * U(t_f))]
     g_term = -np.real((target.dag() * U_final).tr())   # Calculamos el término g(U(t_f))
     controles = resultado.final_amps   # Importamos los controles finales
     penalizacion = (alpha_val / 2.0) * np.sum(controles**2) * dt_val   # Calculamos el termino de Lagrange
@@ -71,10 +72,10 @@ todos_los_generadores = generadores_estocasticos + generadores_deterministas
 def ejecutar_intento_qutip(gen, intento_id, semilla_proceso):
     inicio_tiempo = time.time()   # Para medir el tiempo de cálculo
     
-    # Fijamos la semilla aquí dentro para obligar al proceso hijo a ser reproducible
+    # Fijamos la semilla aquí dentro para asegurar reproducibilidad de los resultados, ya que cada proceso paralelo tiene su propio espacio de memoria
     np.random.seed(semilla_proceso)
     
-    # Ejecución del algoritmo GRAPE (en realidad L-BFGS-B)
+    # Ejecución del algoritmo GRAPE con L-BFGS-B
     res = cpo.optimize_pulse_unitary(
         H_d, H_c, U_0, U_target,   # Hamiltonianos y condiciones de contorno
         num_tslots=N,   # Número de intervalos
@@ -85,7 +86,6 @@ def ejecutar_intento_qutip(gen, intento_id, semilla_proceso):
         fid_err_targ=tol_error,   # Tolerancia sobre la fidelidad
         max_iter=max_iteraciones,   # Límite superior de iteraciones
         min_grad=min_gradiente,   # Tolerancia sobre el gradiente
-        # phase_option='SU',   # Fijar la fase, de forma que el elemento (1,1) de U(t_f) sea real positivo
         gen_stats=False
     )
     
@@ -94,11 +94,11 @@ def ejecutar_intento_qutip(gen, intento_id, semilla_proceso):
     
     # Calculamos Phi_0 y J
     phi_0 = 1.0 - res.fid_err  # Fidelidad normalizada a la unidad
-    J_val = funcional_J(res, alpha, dt, U_target)   # Funcional J = g + f
+    J_val = funcional_J(res, alpha, dt, U_target)   # Funcional J
     
-    # Extraemos solo la información numérica estrictamente necesaria para aligerar la memoria en joblib
-    final_amps_copia = np.array(res.final_amps)
-    time_copia = np.array(res.time)
+    # Extraemos alguna información para liberar memoria y poder guardarla en un diccionario
+    final_amps_copia = np.array(res.final_amps) # Extraemos los controles finales como array de NumPy
+    time_copia = np.array(res.time) # Extraemos el vector de tiempos como array de NumPy
     u_final_copia = np.array(res.evo_full_final.full()) # Extraemos la matriz de evolución final como array de NumPy
     
     return {
@@ -112,10 +112,10 @@ def ejecutar_intento_qutip(gen, intento_id, semilla_proceso):
     }
 
 
-# --- INICIO DE LA PARALELIZACIÓN ---
+# Ahora ejecutamos los intentos en paralelo
 
-# Creamos la lista con la combinación de todas las tareas independientes a lanzar
-# Asignamos un índice de semilla único e invariable a cada tarea individual
+# Creamos la lista con la combinación de todas las tareas independientes a lanzar, asignando una semilla a cada uno para no repetir resultados pseudo-aleatorios
+
 tareas = []
 contador_semilla = 0
 for gen in todos_los_generadores:
@@ -125,19 +125,19 @@ for gen in todos_los_generadores:
         tareas.append((gen, i, contador_semilla))
         contador_semilla += 1
 
-# Ejecutamos de forma masiva y en paralelo haciendo uso de todos los núcleos del procesador
 resultados_brutos = Parallel(n_jobs=-1)(
     delayed(ejecutar_intento_qutip)(gen, i, sem) for gen, i, sem in tareas
 )
 
-# --- PROCESAMIENTO SECUENCIAL DE RESULTADOS ---
+# Ahora procesamos los resultados para obtener el mejor resultado de cada generador y también el mejor resultado global (respecto de J)
 
 resultados_tabla = []
 mejor_J_global = float('inf')   # En minimización, el peor resultado posible es J = inf
 mejor_resultado_global = None
 mejor_nombre_global = ""
 
-# Reconstruimos los óptimos locales reuniendo ordenadamente los generadores
+# Reconstruimos reuniendo ordenadamente los generadores
+
 for gen in todos_los_generadores:
     es_estocastico = gen in generadores_estocasticos
     
@@ -205,25 +205,30 @@ print(np.round(U_target.full(), decimals=3))
 tiempos = mejor_resultado_global['time']
 u_opt = mejor_resultado_global['final_amps']
 
-fig, ax = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
+# Ampliamos a 3 filas de subplots para incluir u0 de forma limpia
+fig, ax = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
-# Para el primer qubit dibujamos u_1 y u_2
-
-ax[0].stairs(u_opt[:, 0], tiempos, label='$u_1(t)$, $\sigma_x\otimes1$', color='#1f77b4', baseline=None)
-ax[0].stairs(u_opt[:, 1], tiempos, label='$u_2(t)$, $\sigma_y\otimes1$', color='#ff7f0e', baseline=None)
+# Subplot 0: Para el término de u_0
+ax[0].stairs(u_opt[:, 0], tiempos, label='$u_0(t)$, $1\otimes1$', color='#7f7f7f', baseline=None)
 ax[0].set_ylabel('Amplitud')
 ax[0].legend(loc='upper right')
 ax[0].grid(True, alpha=0.3)
-ax[0].set_title(f'Mejores Controles - Generador: {mejor_nombre_global} ($J$ = {mejor_J_global:.3f})')
+ax[0].set_title(f'Controles óptimos numéricos (GRAPE con QuTiP, generador: {mejor_nombre_global}) ($J$ = {mejor_J_global:.3f})')
 
-# Para el segundo qubit dibujamos u_3 y u_4
-
-ax[1].stairs(u_opt[:, 2], tiempos, label='$u_3(t)$, $1\otimes\sigma_x$', color='#2ca02c', baseline=None)
-ax[1].stairs(u_opt[:, 3], tiempos, label='$u_4(t)$, $1\otimes\sigma_y$', color='#d62728', baseline=None)
-ax[1].set_xlabel('Tiempo ($t$)')
+# Subplot 1: Para el primer qubit dibujamos u_1 y u_2
+ax[1].stairs(u_opt[:, 1], tiempos, label='$u_1(t)$, $\sigma_x\otimes1$', color='#1f77b4', baseline=None)
+ax[1].stairs(u_opt[:, 2], tiempos, label='$u_2(t)$, $\sigma_y\otimes1$', color='#ff7f0e', baseline=None)
 ax[1].set_ylabel('Amplitud')
 ax[1].legend(loc='upper right')
 ax[1].grid(True, alpha=0.3)
+
+# Subplot 2: Para el segundo qubit dibujamos u_3 y u_4
+ax[2].stairs(u_opt[:, 3], tiempos, label='$u_3(t)$, $1\otimes\sigma_x$', color='#2ca02c', baseline=None)
+ax[2].stairs(u_opt[:, 4], tiempos, label='$u_4(t)$, $1\otimes\sigma_y$', color='#d62728', baseline=None)
+ax[2].set_xlabel('Tiempo ($t$)')
+ax[2].set_ylabel('Amplitud')
+ax[2].legend(loc='upper right')
+ax[2].grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()

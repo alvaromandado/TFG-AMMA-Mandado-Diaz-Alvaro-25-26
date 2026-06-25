@@ -8,15 +8,15 @@ La siguiente tabla vincula las secciones de la memoria con su implementaci처n t�
 
 | Secci처n | Directorio | Archivo de C처digo | Figura Generada | Descripci처n |
 | :--- | :--- | :--- | :--- | :--- |
-| **Cap. 5.3**, Fig. 10 | `/QuTiP` | `GRAPE_QuTiP.py` | `qutip.png` | Uso del paquete QuTiP para encontrar 처ptimamente la puerta CNOT. |
-| **Cap. 5.3**, Fig. 11 | `/SciPy` | `GRAPE_SciPy.py` | `scipy.png` | Uso de SciPy para escribir un algoritmo para encontrar 처ptimamente la puerta CNOT. |
+| **Cap. 3** | `/QuTiP` | `GRAPE_QuTiP.py`, `CRAB_QuTiP.py` | `grape_qutip.png`, `crab_qutip.png` | Uso del paquete QuTiP para encontrar 처ptimamente la puerta CNOT. |
+| **Cap. 3** | `/SciPy` | `GRAPE_SciPy.py`, `CRAB_SciPy.py` | `grape_scipy.png`, `crab_scipy.png` | Uso del paquete SciPy para encontrar 처ptimamente la puerta CNOT. |
 
 ## Requisitos e Instalaci처n
 
 Las simulaciones han sido desarrolladas en **Python 3.10+**. Para ejecutarlas, se recomienda crear un entorno virtual e instalar las dependencias necesarias:
 
 ```bash
-pip install numpy matplotlib qutip qutip-qtrl qutip-qoc
+pip install numpy matplotlib qutip qutip-qtrl qutip-qoc joblib scipy
 ```
 
 ### Instrucciones de uso:

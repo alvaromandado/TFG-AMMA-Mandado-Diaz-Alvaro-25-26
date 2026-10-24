@@ -1,34 +1,21 @@
-# Appendix: Quantum Information and Quantum Computation (FT37)
+# Appendix: Introduction to Optimal Control in the Dynamics of Quantum Systems (Department of Mathematical Analysis and Applied Mathematics)
 
 *Read this in other languages: [Español](README.md)*
 
+This repository contains the source code and generated figures for the Bachelor's Thesis titled **"Introduction to Optimal Control in the Dynamics of Quantum Systems"**, presented at the Faculty of Mathematical Sciences of the Complutense University of Madrid (Academic Year 2025-2026).
 
-This repository contains the codes and figures released for the Bachelor's thesis **Quantum Information and Quantum Computation**, presented in Facultad de Ciencias Físicas at Universidad Complutense de Madrid (2025-2026)
+## Files and Results Correspondence
 
+The following table links the sections of the memoir with their technical implementation and the graphical results obtained:
 
-## Files and results correspondance
-
-The next table shows how the different sections in the memoir relate to the technical implementation and the graphic results:
-
-| Section | Branch | Code file | Generated figure | Description |
+| Section | Directory | Code File | Generated Figure | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Sec. 2.2**, Fig. 2 | `/Deutsch-Jozsa` | `deutsch-jozsa-eng.py` | `deutsch-jozsa-eng.png` | Deutsch-Jozsa algorithm simulation, compared to the postquantum non-deterministic algorithm and random search. |
-| **Sec. 2.4**, Fig. 3 | `/Grover` | `grover-eng.py` | `grover-eng.png` | Amplitud amplifying and randomized database search compaering Gorver's algorithm and linear search. |
-| **Sec. 2.5**, Fig. 4 | `/Shor` | `shor-eng.py` | `shor-eng.png` | Integer factorization comparing Shor's algorithm with a series of classical algorithms. |
+| **Chap. 3** | `/QuTiP` | `GRAPE_QuTiP.py`, `CRAB_QuTiP.py` | `grape_qutip.png`, `crab_qutip.png` | Use of the QuTiP package for optimal CNOT gate search. |
+| **Chap. 3** | `/SciPy` | `GRAPE_SciPy.py`, `CRAB_SciPy.py` | `grape_scipy.png`, `crab_scipy.png` | Use of the SciPy package for optimal CNOT gate search. |
 
-## Prerrequisites and Installation
+## Prerequisites and Installation
 
-The simulations have been implemented using **Python 3.10+**. To run them, it is highly recommended to use a virtual environment and to install the necessary packages:
+The simulations have been developed in **Python 3.10+**. To run them, it is recommended to create a virtual environment and install the necessary dependencies:
 
 ```bash
-pip install numpy matplotlib qiskit qiskit-aer
-```
-
-### Usage instructions:
-1. Clone the repository: `git clone https://github.com/alvaromandado/TFG-FT37-Mandado-Diaz-Alvaro-25-26.git`
-2. Access the desired algorithm's branch (e.g.: `cd Grover`).
-3. Run the script: `python grover.py`.
-
-## 📄 License
-
-This project runs under a **MIT License**. Feel free to use, modify and distribute the contents of the project, given that proper references to the original author are provided.
+pip install numpy matplotlib qutip qutip-qtrl qutip-qoc joblib scipy

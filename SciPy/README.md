@@ -1,5 +1,7 @@
 # Algoritmos GRAPE y CRAB con SciPy
 
+*Leer en otros idiomas: [English](README.eng.md)*
+
 Este directorio contiene la implementación manual del algoritmo GRAPE (L-BFGS-B) y del algoritmo CRAB (Nelder-Mead) a través del paquete de SciPy. Este se utiliza para alcanzar óptimamente la puerta CNOT a partir del siguiente hamiltoniano:
 $$H=J(\sigma_z\otimes\sigma_z)+u_0(t) \cdot 1+(u_1(t)\sigma_x+u_2(t)\sigma_y)\otimes 1+1\otimes(u_3(t)\sigma_x+u_4(t)\sigma_y)$$
 

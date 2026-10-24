@@ -1,5 +1,7 @@
 # Anexo: Introducción al control óptimo en la dinámica de sistemas cuánticos (Departamento de Análisis Matemático y Matemática Aplicada)
 
+*Leer en otros idiomas: [English](README.eng.md)*
+
 Este repositorio contiene el código fuente y las figuras generadas para el Trabajo de Fin de Grado titulado **"Introducción al control óptimo en la dinámica de sistemas cuánticos"**, presentado en la Facultad de Ciencias Matemáticas de la Universidad Complutense de Madrid (Curso 2025-2026).
 
 ## Correspondencia de Archivos y Resultados

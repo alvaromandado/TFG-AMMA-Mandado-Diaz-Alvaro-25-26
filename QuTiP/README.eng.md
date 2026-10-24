@@ -1,34 +1,24 @@
-# Appendix: Quantum Information and Quantum Computation (FT37)
+# GRAPE and CRAB Algorithms with QuTiP
 
 *Read this in other languages: [Español](README.md)*
 
+This directory contains the implementation of the GRAPE and CRAB algorithms using the QuTiP package. These are used to optimally realize the CNOT gate using the following Hamiltonian:
+$$H=J(\sigma_z\otimes\sigma_z)+u_0(t) \cdot 1+(u_1(t)\sigma_x+u_2(t)\sigma_y)\otimes 1+1\otimes(u_3(t)\sigma_x+u_4(t)\sigma_y)$$
 
-This repository contains the codes and figures released for the Bachelor's thesis **Quantum Information and Quantum Computation**, presented in Facultad de Ciencias Físicas at Universidad Complutense de Madrid (2025-2026)
+## Description
+The file `GRAPE_QuTiP.py` describes the Hamiltonian and problem parameters to then optimize the controls through *qutip*.
+Optimization is performed by running the algorithm with random initial controls, evaluating the objective function values, and displaying the controls that best optimize the function.
 
+The file `CRAB_QuTiP.py` describes the Hamiltonian and problem parameters to then optimize the controls through *qutip*.
+Optimization is performed by running the algorithm for random frequencies, evaluating the parameters to be optimized, and displaying the controls that best optimize the function.
 
-## Files and results correspondance
+## Contents
+* **`GRAPE_QuTiP.py`**: Implementation of GRAPE using QuTiP. The code runs the algorithm multiple times and selects the best result.
+* **`grape_qutip.png`**: Graphical representation of the best controls found by the code for GRAPE.
+* **`CRAB_QuTiP.py`**: Implementation of CRAB using QuTiP. The code runs the algorithm multiple times and selects the best result.
+* **`crab_qutip.png`**: Graphical representation of the best controls found by the code for CRAB.
 
-The next table shows how the different sections in the memoir relate to the technical implementation and the graphic results:
-
-| Section | Branch | Code file | Generated figure | Description |
-| :--- | :--- | :--- | :--- | :--- |
-| **Sec. 2.2**, Fig. 2 | `/Deutsch-Jozsa` | `deutsch-jozsa-eng.py` | `deutsch-jozsa-eng.png` | Deutsch-Jozsa algorithm simulation, compared to the postquantum non-deterministic algorithm and random search. |
-| **Sec. 2.4**, Fig. 3 | `/Grover` | `grover-eng.py` | `grover-eng.png` | Amplitud amplifying and randomized database search compaering Gorver's algorithm and linear search. |
-| **Sec. 2.5**, Fig. 4 | `/Shor` | `shor-eng.py` | `shor-eng.png` | Integer factorization comparing Shor's algorithm with a series of classical algorithms. |
-
-## Prerrequisites and Installation
-
-The simulations have been implemented using **Python 3.10+**. To run them, it is highly recommended to use a virtual environment and to install the necessary packages:
-
+## Execution
 ```bash
-pip install numpy matplotlib qiskit qiskit-aer
-```
-
-### Usage instructions:
-1. Clone the repository: `git clone https://github.com/alvaromandado/TFG-FT37-Mandado-Diaz-Alvaro-25-26.git`
-2. Access the desired algorithm's branch (e.g.: `cd Grover`).
-3. Run the script: `python grover.py`.
-
-## 📄 License
-
-This project runs under a **MIT License**. Feel free to use, modify and distribute the contents of the project, given that proper references to the original author are provided.
+python GRAPE_QuTiP.py
+python CRAB_QuTiP.py
